@@ -1,137 +1,136 @@
-/* --------------------------
-   Basic body styling
---------------------------- */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Arial', sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #0c0c0c; /* Sentient dark theme background */
-  color: #fff;
-  min-height: 100vh;
+:root{
+  --bg: #071024;
+  --card: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+  --muted: #9aa9bd;
+  --glass: rgba(255,255,255,0.04);
+  --accent: #06b6d4;
+  --title-size: clamp(18px, 4vw, 28px);
 }
 
-/* --------------------------
-   Title
---------------------------- */
-h1 {
-  margin-top: 20px;
-  margin-bottom: 10px;
-  text-align: center;
-  font-size: 2rem;
-  color: #00ffd5; /* Sentient brand color */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family: Inter, system-ui, Arial;
+  background: radial-gradient(circle at 10% 20%, rgba(124,58,237,0.12), transparent 8%),
+              linear-gradient(180deg, #020617 0%, var(--bg) 100%);
+  color: #e6eef6;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+  padding:18px;
 }
 
-/* --------------------------
-   Puzzle container
---------------------------- */
-#puzzle {
-  display: grid;
-  grid-template-columns: repeat(3, 100px);
-  grid-template-rows: repeat(3, 100px);
-  gap: 5px;
-  margin-top: 20px;
-  perspective: 1000px; /* For nice tile flipping effect if desired */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  position:relative;
+  margin-bottom:18px;
 }
-
-@media screen and (max-width: 500px) {
-  #puzzle {
-    grid-template-columns: repeat(3, 30vw);
-    grid-template-rows: repeat(3, 30vw);
-    gap: 3px;
-  }
+.title{
+  font-weight:700;
+  font-size:var(--title-size);
+  text-align:center;
+  background: linear-gradient(90deg,#fff,#cfe9ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
-
-/* --------------------------
-   Puzzle tiles
---------------------------- */
-.tile {
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.3s ease; /* Smooth swap animation */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+.timer-area{
+  position:absolute;
+  right:0;
+  top:0;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:4px;
 }
-
-/* Highlight selected tile */
-.tile.selected {
-  outline: 3px solid #00ffd5; /* Sentient color highlight */
-  transform: scale(1.05); /* slight zoom effect */
+.timer, .best{
+  font-weight:600;
+  background:var(--glass);
+  padding:6px 10px;
+  border-radius:12px;
+  font-size:14px;
+  color:var(--muted);
 }
+.best{ font-size:12px; }
 
-/* --------------------------
-   Overlay modal
---------------------------- */
-#overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.85);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 10;
+.main{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
-
-#overlay.hidden {
-  display: none;
+.puzzle-wrap{
+  width:min(92vw,640px);
+  aspect-ratio:1/1;
+  display:grid;
+  place-items:center;
+  padding:12px;
 }
-
-#overlay h2 {
-  font-size: 2rem;
-  margin-bottom: 10px;
-  color: #00ffd5;
+.puzzle{
+  width:100%;
+  height:100%;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(3,1fr);
+  gap:6px;
+  padding:6px;
+  border-radius:18px;
+  box-shadow:0 8px 30px rgba(3,6,23,0.65);
 }
-
-#overlay p {
-  font-size: 1.2rem;
-  margin-bottom: 20px;
+.tile{
+  border-radius:10px;
+  background-size:300% 300%;
+  cursor:pointer;
+  transition: transform 200ms;
 }
+.tile.selected { outline: 2px solid var(--accent); }
 
-#overlay button {
-  padding: 10px 20px;
-  font-size: 1rem;
-  background-color: #00ffd5;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  color: #000;
-  transition: 0.2s;
+.byline{
+  position:fixed;
+  right:16px;
+  bottom:14px;
+  display:flex;
+  gap:6px;
+  align-items:center;
+  font-size:13px;
+  color:var(--muted);
+  background: rgba(255,255,255,0.02);
+  padding:8px 10px;
+  border-radius:999px;
+  backdrop-filter: blur(6px);
+  border:1px solid rgba(255,255,255,0.03);
 }
-
-#overlay button:hover {
-  background-color: #00cca5;
+.logo-small{
+  height:16px;
+  width:auto;
+  display:inline-block;
 }
+.handle{ font-weight:600; color:#eaf8ff; }
 
-/* --------------------------
-   Footer / Byline
---------------------------- */
-footer {
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.9rem;
-  color: #aaa;
+.overlay{
+  position:fixed; inset:0; display:grid; place-items:center;
+  background: rgba(3,6,23,0.75);
+  z-index:999;
 }
-
-footer img {
-  width: 20px;
-  height: 20px;
+.hidden{ display:none; }
+.modal{
+  background: var(--glass);
+  padding:22px;
+  border-radius:14px;
+  min-width:260px;
+  text-align:center;
 }
-
-/* --------------------------
-   Timer & Best Time
---------------------------- */
-#timer, #best {
-  margin-top: 15px;
-  font-size: 1.2rem;
-  color: #00ffd5;
+.modal h2{ font-size:20px; margin-bottom:6px; color:#fff; }
+.modal p{ color:var(--muted); margin-bottom:14px; }
+.btn{
+  padding:10px 16px;
+  border-radius:10px;
+  border:none;
+  background:var(--card);
+  color:white;
+  font-weight:700;
+  cursor:pointer;
 }
