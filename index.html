@@ -1,41 +1,38 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sentient Puzzle</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar">
-    <h1 class="title">Sentient Puzzle</h1>
-    <div class="timer-area">
-      <div class="timer" id="timer">01:00</div>
-      <div class="best" id="best">Best: --</div>
-    </div>
-  </header>
 
-  <main class="main">
-    <section class="puzzle-wrap">
-      <div id="puzzle" class="puzzle"></div>
-    </section>
-  </main>
+  <!-- Title -->
+  <h1>Sentient Puzzle</h1>
 
-  <footer class="byline">
-    <img src="assets/x-logo.png" alt="X logo" class="logo-small"/>
-    <img src="assets/sentient-logo.png" alt="Sentient logo" class="logo-small"/>
-    made by <span class="handle">@prith_boy</span>
-  </footer>
+  <!-- Timer and Best Score -->
+  <div id="timer">01:00</div>
+  <div id="best">Best: --</div>
 
-  <!-- Win / Time up modal -->
-  <div id="overlay" class="overlay hidden">
-    <div class="modal">
-      <h2 id="modal-title">You won</h2>
-      <p id="modal-sub">Nice! Puzzle complete.</p>
-      <button id="play-again" class="btn">Play again</button>
-    </div>
+  <!-- Puzzle container -->
+  <div id="puzzle"></div>
+
+  <!-- Overlay for Win / Time up -->
+  <div id="overlay" class="hidden">
+    <h2 id="modal-title">You won</h2>
+    <p id="modal-sub">Completed in 00:00</p>
+    <button id="play-again">Play Again</button>
   </div>
 
+  <!-- Footer / Byline -->
+  <footer>
+    <img src="assets/x-logo.png" alt="X logo">
+    <img src="assets/sentient-logo.png" alt="Sentient logo">
+    made by @prith_boy
+  </footer>
+
+  <!-- Script -->
   <script src="script.js"></script>
 </body>
 </html>
