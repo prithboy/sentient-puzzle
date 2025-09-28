@@ -9,12 +9,11 @@ const timerEl = document.getElementById('timer');
 
 let tiles = [];
 let order = [];
-let selectedIndex = null;
 let timerSec = 60;
 let timerInterval = null;
-
 let bestTime = localStorage.getItem("sentient-best") || null;
 
+// Puzzle images
 const puzzleImages = [
   "assets/sentient-logo.png",
   "assets/puzzle1.jpg",
@@ -23,36 +22,48 @@ const puzzleImages = [
   "assets/puzzle4.jpg"
 ];
 
-function getRandomImage(){
+// Pick random puzzle image
+function getRandomImage() {
   const pick = Math.floor(Math.random() * puzzleImages.length);
   return `url("${puzzleImages[pick]}")`;
 }
 
-function init(){
-  order = Array.from({length:TOTAL}, (_,i)=>i);
+// Initialize puzzle
+function init() {
+  order = Array.from({ length: TOTAL }, (_, i) => i);
   shuffle(order);
   puzzleEl.innerHTML = '';
   tiles = [];
   const bgUrl = getRandomImage();
 
-  for(let idx=0; idx<TOTAL; idx++){
+  for (let idx = 0; idx < TOTAL; idx++) {
     const tile = document.createElement('div');
     tile.className = 'tile';
     tile.dataset.index = idx;
+    tile.dataset.place = idx; // initial visual place
     tile.style.backgroundImage = bgUrl;
+    tile.style.order = idx;
     const row = Math.floor(idx / COLS);
     const col = idx % COLS;
     const xPercent = (col / (COLS - 1)) * 100;
     const yPercent = (row / (ROWS - 1)) * 100;
     tile.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
-    tile.addEventListener('click', onTileClick);
+
+    // Drag & Drop Events
+    tile.setAttribute('draggable', true);
+    tile.addEventListener('dragstart', onDragStart);
+    tile.addEventListener('dragover', onDragOver);
+    tile.addEventListener('drop', onDrop);
+
+    puzzleEl.appendChild(tile);
     tiles.push(tile);
   }
 
+  // Shuffle visual positions
   order.forEach((tileIdx, placeIdx) => {
     const t = tiles[tileIdx];
     t.dataset.place = placeIdx;
-    puzzleEl.appendChild(t);
+    t.style.order = placeIdx;
   });
 
   hideOverlay();
@@ -60,56 +71,54 @@ function init(){
   updateBestUI();
 }
 
-function shuffle(arr){
-  for(let i=arr.length-1;i>0;i--){
-    const j = Math.floor(Math.random()*(i+1));
-    [arr[i],arr[j]]=[arr[j],arr[i]];
+// Shuffle array
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  if(arr.every((v,i)=>v===i)) [arr[0],arr[1]]=[arr[1],arr[0]];
+  if (arr.every((v, i) => v === i)) [arr[0], arr[1]] = [arr[1], arr[0]];
 }
 
-function onTileClick(e){
-  const tile = e.currentTarget;
-  const place = Number(tile.dataset.place);
-  if(selectedIndex === null){
-    selectedIndex = place;
-    tile.classList.add('selected');
-    return;
-  }
-  if(selectedIndex === place){
-    tile.classList.remove('selected');
-    selectedIndex = null;
-    return;
-  }
-  swapPlaces(selectedIndex, place);
-  selectedIndex = null;
-  if(checkSolved()) win();
+// Drag & Drop logic
+let draggedTile = null;
+
+function onDragStart(e) {
+  draggedTile = e.currentTarget;
 }
 
-function swapPlaces(aPlace, bPlace){
-  const a = [...puzzleEl.children].find(c => Number(c.dataset.place) === aPlace);
-  const b = [...puzzleEl.children].find(c => Number(c.dataset.place) === bPlace);
-  if(!a || !b) return;
-  a.dataset.place = bPlace;
-  b.dataset.place = aPlace;
-  const aNext = a.nextSibling === b ? a : a.nextSibling;
-  puzzleEl.insertBefore(b, aNext);
-  puzzleEl.insertBefore(a, puzzleEl.children[Math.min(aPlace,bPlace)]);
-  a.classList.remove('selected');
-  b.classList.remove('selected');
+function onDragOver(e) {
+  e.preventDefault(); // allow drop
 }
 
-function checkSolved(){
-  for(const child of puzzleEl.children){
-    if(Number(child.dataset.index) !== Number(child.dataset.place)) return false;
-  }
-  return true;
+function onDrop(e) {
+  e.preventDefault();
+  const targetTile = e.currentTarget;
+  if (!draggedTile || draggedTile === targetTile) return;
+
+  // Swap dataset.place and style.order
+  const tempPlace = draggedTile.dataset.place;
+  draggedTile.dataset.place = targetTile.dataset.place;
+  targetTile.dataset.place = tempPlace;
+
+  draggedTile.style.order = draggedTile.dataset.place;
+  targetTile.style.order = targetTile.dataset.place;
+
+  draggedTile = null;
+
+  if (checkSolved()) win();
 }
 
-function win(){
+// Check if puzzle is solved
+function checkSolved() {
+  return tiles.every(tile => Number(tile.dataset.index) === Number(tile.dataset.place));
+}
+
+// Win logic
+function win() {
   stopTimer();
   const timeTaken = 60 - timerSec;
-  if(!bestTime || timeTaken < bestTime){
+  if (!bestTime || timeTaken < bestTime) {
     bestTime = timeTaken;
     localStorage.setItem("sentient-best", bestTime);
   }
@@ -117,39 +126,46 @@ function win(){
   showOverlay('You won', `Completed in ${formatTime(timeTaken)}`);
 }
 
-function startTimer(){
+// Timer
+function startTimer() {
   stopTimer();
   timerSec = 60;
   updateTimerUI();
   timerInterval = setInterval(() => {
     timerSec--;
     updateTimerUI();
-    if(timerSec <= 0){
+    if (timerSec <= 0) {
       stopTimer();
       showOverlay('Time up', 'Play again');
     }
   }, 1000);
 }
-function stopTimer(){ if(timerInterval) clearInterval(timerInterval); }
-function updateTimerUI(){ timerEl.textContent = formatTime(timerSec); }
 
-function updateBestUI(){
+function stopTimer() { if (timerInterval) clearInterval(timerInterval); }
+function updateTimerUI() { timerEl.textContent = formatTime(timerSec); }
+
+// Best time UI
+function updateBestUI() {
   const bestEl = document.getElementById('best');
-  if(bestTime) bestEl.textContent = `Best: ${formatTime(bestTime)}`;
+  if (bestTime) bestEl.textContent = `Best: ${formatTime(bestTime)}`;
   else bestEl.textContent = "Best: --";
 }
-function formatTime(seconds){
-  const mm = String(Math.floor(seconds/60)).padStart(2,'0');
-  const ss = String(seconds%60).padStart(2,'0');
+
+// Format time mm:ss
+function formatTime(seconds) {
+  const mm = String(Math.floor(seconds / 60)).padStart(2, '0');
+  const ss = String(seconds % 60).padStart(2, '0');
   return `${mm}:${ss}`;
 }
 
-function showOverlay(title, sub){
+// Overlay modal
+function showOverlay(title, sub) {
   modalTitle.textContent = title;
   modalSub.textContent = sub;
   overlay.classList.remove('hidden');
 }
-function hideOverlay(){ overlay.classList.add('hidden'); }
+function hideOverlay() { overlay.classList.add('hidden'); }
 
+// Play again button
 playAgainBtn.addEventListener('click', () => init());
 window.addEventListener('load', () => init());
