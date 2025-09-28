@@ -15,7 +15,6 @@ let bestTime = localStorage.getItem("sentient-best") || null;
 
 // Puzzle images
 const puzzleImages = [
-  "assets/sentient-logo.png",
   "assets/puzzle1.jpg",
   "assets/puzzle2.jpg",
   "assets/puzzle3.jpg",
@@ -169,3 +168,4 @@ function hideOverlay() { overlay.classList.add('hidden'); }
 // Play again button
 playAgainBtn.addEventListener('click', () => init());
 window.addEventListener('load', () => init());
+
