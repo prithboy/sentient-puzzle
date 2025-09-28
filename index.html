@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sentient Puzzle</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1 class="title">Sentient Puzzle</h1>
+    <div class="timer-area">
+      <div class="timer" id="timer">01:00</div>
+      <div class="best" id="best">Best: --</div>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="puzzle-wrap">
+      <div id="puzzle" class="puzzle"></div>
+    </section>
+  </main>
+
+  <footer class="byline">
+    <img src="assets/x-logo.png" alt="X logo" class="logo-small"/>
+    <img src="assets/sentient-logo.png" alt="Sentient logo" class="logo-small"/>
+    made by <span class="handle">@prith_boy</span>
+  </footer>
+
+  <!-- Win / Time up modal -->
+  <div id="overlay" class="overlay hidden">
+    <div class="modal">
+      <h2 id="modal-title">You won</h2>
+      <p id="modal-sub">Nice! Puzzle complete.</p>
+      <button id="play-again" class="btn">Play again</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
